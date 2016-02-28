@@ -2,15 +2,17 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
+#define BUF_SIZE 8
+
 int main() {
-	char[256] buf;
-	int readed = read(0, buf, 256);
+	char buf[BUF_SIZE];
+	
+	int readed;
+	while ((readed = read(0, buf, BUF_SIZE)) > 0) {
+		write(2, buf, readed);
+	}
 
 	if (readed < 0) {
 		write(2, "An error occured in the read\n", 30);
-	} else {
-		write(1, buf, readed);
 	}
-
-	exit(0);
 }
