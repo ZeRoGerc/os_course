@@ -9,7 +9,7 @@ int main() {
 	
 	int readed;
 	while ((readed = read(0, buf, BUF_SIZE)) > 0) {
-		write(2, buf, readed);
+		write(1, buf, readed);
 	}
 
 	if (readed < 0) {
