@@ -7,20 +7,22 @@
 int main() {
 	char buf[BUF_SIZE];
 	
-	int readed;
-	while ((readed = read(0, buf, BUF_SIZE)) > 0) {
-		int writed = 0;
-		while (writed < readed) {
-			int temp = write(1, buf, readed);
+	int read_amount;
+	while ((read_amount = read(0, buf, BUF_SIZE)) > 0) {
+		int write_amount = 0;
+		while (write_amount < read_amount) {
+			int temp = write(1, buf, read_amount);
 			if (temp < 0) {
 				write(2, "An error occured in the write\n", 31);
-				return 0;
+				return 1;
 			}
-			writed += temp;
+			write_amount += temp;
 		}
 	}
 
-	if (readed < 0) {
+	if (read_amount < 0) {
 		write(2, "An error occured in the read\n", 30);
+		return 1;
 	}
+	return 0;
 }
