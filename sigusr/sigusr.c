@@ -9,16 +9,16 @@ void sig_handler(int signum, siginfo_t *info, void *context)
 {
 	received = 1;
 	if (signum == SIGUSR1) {
-		printf("SIGUSR1 from %ld", (long)info->si_pid);
+		printf("SIGUSR1 from %d", info->si_pid);
 	} else if (signum == SIGUSR2) {
-		printf("SIGUSR2 from %ld", (long)info->si_pid);
+		printf("SIGUSR2 from %d", info->si_pid);
 	}
 }
 
 int main()
 {
 	struct sigaction act;
-	memset(&act, '\0', sizeof(act));
+	memset(&act, 0, sizeof(act));
 	act.sa_sigaction = &sig_handler;
 	act.sa_flags = SA_SIGINFO;
 
