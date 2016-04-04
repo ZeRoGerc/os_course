@@ -22,7 +22,7 @@ void sig_handler(int signum, siginfo_t *info, void *context)
 int main()
 {
 	for (int i = 0; i < 32; i++) {
-		if (i != SIGUSR1) {
+		if (i != SIGUSR1 && i != SIGUSR2) {
 			signal(i, empty_handler);
 		}
 	}
