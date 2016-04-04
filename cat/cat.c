@@ -1,28 +1,52 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
 
 #define BUF_SIZE 1024
 
-int main() {
+int main(int argc, char* argv[]) {
 	char buf[BUF_SIZE];
 	
-	int read_amount;
-	while ((read_amount = read(0, buf, BUF_SIZE)) > 0) {
-		int write_amount = 0;
-		while (write_amount < read_amount) {
-			int temp = write(1, buf, read_amount);
-			if (temp < 0) {
-				write(2, "An error occured in the write\n", 31);
-				return 1;
-			}
-			write_amount += temp;
+	int in = 0;
+	if (argc > 1) {
+		in = open(argv[1], O_RDONLY);
+		if (in == -1) {
+			perror(strerror(errno));
+			return 1;
 		}
 	}
 
-	if (read_amount < 0) {
-		write(2, "An error occured in the read\n", 30);
-		return 1;
+	int read_amount;
+	while (1) {
+		read_amount = read(in, buf, BUF_SIZE);
+		if (read_amount == -1) {
+			perror(strerror(errno));
+			if (errno == EINTR) 
+				continue;
+			else
+				return 1;
+		}
+		if (read_amount == 0) {
+			break;
+		}
+
+		int write_amount = 0;
+		while (write_amount < read_amount) {
+			int temp = write(1, buf, read_amount);
+			if (temp == -1) {
+				perror(strerror(errno));
+				if (errno == EINTR) {
+					continue;
+				} else {
+					return 1;
+				}
+			}
+			write_amount += temp;
+		}
 	}
 	return 0;
 }
