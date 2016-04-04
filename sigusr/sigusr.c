@@ -5,6 +5,10 @@
 
 int received = 0;
 
+void empty_handler(int signum) {
+	return;
+}
+
 void sig_handler(int signum, siginfo_t *info, void *context) 
 {
 	received = 1;
@@ -17,6 +21,11 @@ void sig_handler(int signum, siginfo_t *info, void *context)
 
 int main()
 {
+	for (int i = 0; i < 32; i++) {
+		if (i != SIGUSR1) {
+			signal(i, empty_handler);
+		}
+	}
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_sigaction = &sig_handler;
@@ -27,7 +36,13 @@ int main()
 		perror("sigaction failed");
 		return 1;
 	} else {
-		sleep(10);
+		int left = 10;
+		while (left > 0) {
+			left = sleep(10);
+			if (received != 0) {
+				return 0;
+			}
+		}
 		if (received == 0) {
 			printf("No signals were caught");
 		}
