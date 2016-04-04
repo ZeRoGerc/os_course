@@ -2,12 +2,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
+#include <errno.h>
 
-int received = 0;
-
-void empty_handler(int signum) {
-	return;
-}
+volatile int received = 0;
 
 void sig_handler(int signum, siginfo_t *info, void *context) 
 {
@@ -21,28 +18,20 @@ void sig_handler(int signum, siginfo_t *info, void *context)
 
 int main()
 {
-	for (int i = 0; i < 32; i++) {
-		if (i != SIGUSR1 && i != SIGUSR2) {
-			signal(i, empty_handler);
-		}
-	}
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
+	sigemptyset(&act.sa_mask);
+	sigaddset(&act.sa_mask, SIGUSR1);
+	sigaddset(&act.sa_mask, SIGUSR2);
 	act.sa_sigaction = &sig_handler;
 	act.sa_flags = SA_SIGINFO;
 
 	if ((sigaction(SIGUSR1, &act, NULL) < 0) || (sigaction(SIGUSR2, &act, NULL) < 0)) 
 	{
 		perror("sigaction failed");
-		return 1;
+		return errno;
 	} else {
-		int left = 10;
-		while (left > 0) {
-			left = sleep(10);
-			if (received != 0) {
-				return 0;
-			}
-		}
+		sleep(10);
 		if (received == 0) {
 			printf("No signals were caught");
 		}
