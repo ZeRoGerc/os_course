@@ -2,6 +2,7 @@
 !*/
 !*.*
 !makefile
+!script.sh
 
 *.out
 *.o
