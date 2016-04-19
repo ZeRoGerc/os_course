@@ -17,7 +17,7 @@ vector<int> processes;
 
 void sigint_handler(int signum, siginfo_t *info, void *context) {
 	for (int p : processes) {
-		kill(p, SIGINT);		
+		kill(p, SIGINT);
 	}
 	exit(1);
 }

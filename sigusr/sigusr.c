@@ -4,12 +4,13 @@
 #include <string.h>
 #include <errno.h>
 
-volatile int received = 0;
+volatile int sig = -1;
+volatile int pid = -1;
 
 void sig_handler(int signum, siginfo_t *info, void *context) 
 {
-	received = 1;
-	printf("%d from %d", signum, info->si_pid);
+	sig = signum;
+	pid = info->si_pid;
 }
 
 int main()
@@ -32,7 +33,9 @@ int main()
 	}
 
 	sleep(10);
-	if (received == 0) {
-		printf("No signals were caught");
+	if (sig == -1) {
+		printf("No signals were caught\n");
+	} else {
+		printf("%d from %d\n", sig, pid);
 	}
 }
