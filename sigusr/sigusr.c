@@ -9,31 +9,30 @@ volatile int received = 0;
 void sig_handler(int signum, siginfo_t *info, void *context) 
 {
 	received = 1;
-	if (signum == SIGUSR1) {
-		printf("SIGUSR1 from %d", info->si_pid);
-	} else if (signum == SIGUSR2) {
-		printf("SIGUSR2 from %d", info->si_pid);
-	}
+	printf("%d from %d", signum, info->si_pid);
 }
 
 int main()
 {
 	struct sigaction act;
-	memset(&act, 0, sizeof(act));
-	sigemptyset(&act.sa_mask);
-	sigaddset(&act.sa_mask, SIGUSR1);
-	sigaddset(&act.sa_mask, SIGUSR2);
+	sigfillset(&act.sa_mask);
+	sigdelset(&act.sa_mask, SIGSTOP);
+	sigdelset(&act.sa_mask, SIGKILL);
 	act.sa_sigaction = &sig_handler;
 	act.sa_flags = SA_SIGINFO;
 
-	if ((sigaction(SIGUSR1, &act, NULL) < 0) || (sigaction(SIGUSR2, &act, NULL) < 0)) 
-	{
-		perror("sigaction failed");
-		return errno;
-	} else {
-		sleep(10);
-		if (received == 0) {
-			printf("No signals were caught");
+	for (int i = 1; i <= 31; i++) {
+		if (i == SIGSTOP || i == SIGKILL) {
+			continue;
 		}
+		if ((sigaction(i, &act, NULL) < 0)) {
+			perror("sigaction failed");
+			return errno;
+		}
+	}
+
+	sleep(10);
+	if (received == 0) {
+		printf("No signals were caught");
 	}
 }
