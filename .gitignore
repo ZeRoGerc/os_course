@@ -2,7 +2,6 @@
 !*/
 !*.*
 !makefile
-!script.sh
 
 *.out
 *.o
@@ -10,3 +9,4 @@
 
 .DS_Store
 .DS_Store?
+*.xcodeproj

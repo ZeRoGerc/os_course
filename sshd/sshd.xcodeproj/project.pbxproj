@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E6E6148A1CF2330300D25DDB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E614891CF2330300D25DDB /* main.cpp */; };
+		E6E6148A1CF2330300D25DDB /* sshd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E614891CF2330300D25DDB /* sshd.cpp */; };
+		E6E614921CF2538400D25DDB /* socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E614901CF2538400D25DDB /* socket.cpp */; };
+		E6E6149C1CF2558300D25DDB /* event_queue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E614961CF2558300D25DDB /* event_queue.cpp */; };
+		E6E614A11CF2EFA500D25DDB /* proxy_client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E6149F1CF2EFA500D25DDB /* proxy_client.cpp */; };
+		E6E614A41CF2F82A00D25DDB /* proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E614A21CF2F82A00D25DDB /* proxy.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +28,16 @@
 
 /* Begin PBXFileReference section */
 		E6E614861CF2330300D25DDB /* sshd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sshd; sourceTree = BUILT_PRODUCTS_DIR; };
-		E6E614891CF2330300D25DDB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E6E614891CF2330300D25DDB /* sshd.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sshd.cpp; sourceTree = "<group>"; };
+		E6E614901CF2538400D25DDB /* socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = socket.cpp; sourceTree = "<group>"; };
+		E6E614911CF2538400D25DDB /* socket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = socket.hpp; sourceTree = "<group>"; };
+		E6E614941CF2542900D25DDB /* custom_exception.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = custom_exception.hpp; sourceTree = "<group>"; };
+		E6E614961CF2558300D25DDB /* event_queue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = event_queue.cpp; sourceTree = "<group>"; };
+		E6E614971CF2558300D25DDB /* event_queue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = event_queue.hpp; sourceTree = "<group>"; };
+		E6E6149F1CF2EFA500D25DDB /* proxy_client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = proxy_client.cpp; sourceTree = "<group>"; };
+		E6E614A01CF2EFA500D25DDB /* proxy_client.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = proxy_client.hpp; sourceTree = "<group>"; };
+		E6E614A21CF2F82A00D25DDB /* proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = proxy.cpp; sourceTree = "<group>"; };
+		E6E614A31CF2F82A00D25DDB /* proxy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = proxy.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +70,16 @@
 		E6E614881CF2330300D25DDB /* sshd */ = {
 			isa = PBXGroup;
 			children = (
-				E6E614891CF2330300D25DDB /* main.cpp */,
+				E6E614A21CF2F82A00D25DDB /* proxy.cpp */,
+				E6E614A31CF2F82A00D25DDB /* proxy.hpp */,
+				E6E6149F1CF2EFA500D25DDB /* proxy_client.cpp */,
+				E6E614A01CF2EFA500D25DDB /* proxy_client.hpp */,
+				E6E614961CF2558300D25DDB /* event_queue.cpp */,
+				E6E614971CF2558300D25DDB /* event_queue.hpp */,
+				E6E614891CF2330300D25DDB /* sshd.cpp */,
+				E6E614901CF2538400D25DDB /* socket.cpp */,
+				E6E614911CF2538400D25DDB /* socket.hpp */,
+				E6E614941CF2542900D25DDB /* custom_exception.hpp */,
 			);
 			path = sshd;
 			sourceTree = "<group>";
@@ -118,7 +140,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6E6148A1CF2330300D25DDB /* main.cpp in Sources */,
+				E6E614A41CF2F82A00D25DDB /* proxy.cpp in Sources */,
+				E6E614921CF2538400D25DDB /* socket.cpp in Sources */,
+				E6E614A11CF2EFA500D25DDB /* proxy_client.cpp in Sources */,
+				E6E6149C1CF2558300D25DDB /* event_queue.cpp in Sources */,
+				E6E6148A1CF2330300D25DDB /* sshd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
