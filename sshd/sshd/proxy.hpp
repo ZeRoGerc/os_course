@@ -40,7 +40,7 @@ private:
 
 struct proxy {
 public:
-    proxy(event_queue* queue);
+    proxy(int main_socket, event_queue* queue);
     ~proxy();
     
     proxy(proxy const&) = delete;

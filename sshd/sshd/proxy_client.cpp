@@ -5,6 +5,13 @@
 #include "proxy_client.hpp"
 #include <sys/socket.h>
 #include <vector>
+#include <termios.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
+#define _XOPEN_SOURCE 600
 
 #define check(x) if ((x) == -1) {       \
 perror(#x); \
@@ -18,14 +25,7 @@ proxy_client::proxy_client(std::string const& ip, std::string const& host, size_
 proxy_client::proxy_client(int descriptor)
         : client_socket(descriptor) {}
 
-proxy_client::~proxy_client() {
-    if (terminal_exists) {
-        close(pipe_in[0]);
-        close(pipe_in[1]);
-        close(pipe_out[0]);
-        close(pipe_out[1]);
-    }
-}
+proxy_client::~proxy_client() {}
 
 size_t proxy_client::send(std::string const& request) {
     if (request.size() == 0) return 0;  
@@ -49,18 +49,37 @@ std::string proxy_client::read(size_t len) {
 void proxy_client::init_terminal() {
     terminal_exists = true;
     
-    check(pipe(pipe_in));
-    check(pipe(pipe_out));
+    int master_fd = posix_openpt(O_RDWR);
+    check(master_fd);
+    check(grantpt(master_fd));
+    check(unlockpt(master_fd));
+    
+    int slave_fd = open(ptsname(master_fd), O_RDWR);
+    check(slave_fd);
     
     pid_t id = fork();
     
     if (id == 0) { //child
-        dup2(pipe_in[0], STDIN_FILENO);
-        dup2(pipe_out[1], STDOUT_FILENO);
-        close(pipe_in[0]);
-        close(pipe_in[1]);
-        close(pipe_out[0]);
-        close(pipe_out[1]);
+        struct termios tattr;
+        
+        tcgetattr (slave_fd, &tattr);
+        tattr.c_lflag &= ~(ICANON | ECHO);
+        tattr.c_cc[VMIN] = 1;
+        tattr.c_cc[VTIME] = 0;
+        tcsetattr (slave_fd, TCSANOW, &tattr);
+        
+        
+        dup2(slave_fd, STDIN_FILENO);
+        dup2(slave_fd, STDOUT_FILENO);
+        dup2(slave_fd, STDERR_FILENO);
+        close(master_fd);
+        close(slave_fd);
+        
+        setsid();
+        ioctl(0, TIOCSCTTY, 1);
+        
         execlp("/bin/sh", "/bin/sh", NULL);
     }
+    close(slave_fd);
+    terminal_fd = master_fd;
 }

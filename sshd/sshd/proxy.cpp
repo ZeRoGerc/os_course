@@ -46,13 +46,12 @@ main_server::main_server(int port) : port(port) {
     }
 }
 
-proxy::proxy(event_queue* queue)
+proxy::proxy(int main_socket, event_queue* queue)
 : queue(queue)
-, connect_server(main_server{2539})
+, connect_server(main_server{main_socket})
 {
     
     queue->register_server(connect_server.get_socket(), [this](struct kevent& event) {
-        std::cout << "Connection established\n";
         proxy_client* client = new proxy_client(this->connect_server.get_socket());
         this->queue->add_client(client);
     });

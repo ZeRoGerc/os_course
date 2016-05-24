@@ -44,11 +44,11 @@ void event_queue::add_client(proxy_client* client) {
     events_data[client->get_socket()] = event_data();
     
     client->init_terminal();
-    std::pair<int, int> pipe = client->get_terminal_pipe();
+    int term = client->get_terminal_descriptor();
     
-    add_event(pipe.first, EVFILT_READ, [this, pipe, client](struct kevent& event) {
+    add_event(term, EVFILT_READ, [this, client, term](struct kevent& event) {
         std::vector<char> buf(BUF_SIZE);
-        size_t read_amount = read(pipe.first, buf.data(), BUF_SIZE);
+        size_t read_amount = read(term, buf.data(), BUF_SIZE);
         
         std::string& in_buffer = events_data[client->get_socket()].in_buffer;
         //TODO: faster
@@ -59,16 +59,16 @@ void event_queue::add_client(proxy_client* client) {
         this->resume_write(client->get_socket());
     });
     
-    add_event(pipe.second, EVFILT_WRITE, [this, pipe, client](struct kevent& event) {
+    add_event(term, EVFILT_WRITE, [this, client, term](struct kevent& event) {
         std::string& out_buffer = events_data[client->get_socket()].out_buffer;
         
-        size_t write_amount = write(pipe.second, out_buffer.c_str(), out_buffer.size());
+        size_t write_amount = write(term, out_buffer.c_str(), out_buffer.size());
         check(write_amount);
         
         out_buffer = out_buffer.substr(write_amount);
         
         if (out_buffer.size() == 0) {
-            this->stop_write(pipe.second);
+            this->stop_write(term);
         }
     });
     
@@ -81,7 +81,7 @@ void event_queue::add_client(proxy_client* client) {
     });
     
     stop_write(client->get_socket());
-    stop_write(pipe.second);
+    stop_write(term);
 }
 
 void event_queue::delete_event(size_t ident, int16_t filter) {
@@ -101,7 +101,6 @@ bool event_queue::try_disconnect(struct kevent& event, int16_t filter) {
     if ((event.flags & EV_EOF) && (event.data == 0)) {
         proxy_client* client = clients[event.ident].get();
         if (client != nullptr) {
-            std::cout << "Client with descritor " << client->get_socket() << " diconnected\n";
             delete_event(client->get_socket(), filter);
             
             clients.erase(event.ident);
@@ -126,7 +125,7 @@ void event_queue::handle_client_read(struct kevent& event) {
     data.out_buffer += client->read(BUF_SIZE);
     
     if (data.out_buffer.size() > 0) {
-        resume_write(client->get_terminal_pipe().second);
+        resume_write(client->get_terminal_descriptor());
     }
 }
 

@@ -37,17 +37,16 @@ public:
     
     void init_terminal();
     
-    std::pair<int, int> get_terminal_pipe() {
+    int get_terminal_descriptor() {
         assert(terminal_exists);
-        return std::make_pair(pipe_out[0], pipe_in[1]);
+        return terminal_fd;
     }
     
 private:
     struct socket client_socket;
     std::string host = "localhost";
     
-    int pipe_in[2];
-    int pipe_out[2];
+    int terminal_fd;
     bool terminal_exists;
 };
 
